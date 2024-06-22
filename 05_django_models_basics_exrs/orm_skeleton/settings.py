@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-cd%2g!p_@ut(kc8)%bd9_*@)i@kff^orkvy=!c#i!l+ak98)%0'
+SECRET_KEY = config('MY_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -78,9 +79,9 @@ WSGI_APPLICATION = 'orm_skeleton.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "django_models_basics_exrs_db",
-        "USER": "postgres",
-        "PASSWORD": "admin",
+        "NAME": config('MY_DATABASE_NAME'),
+        "USER": config('MY_DATABASE_USERNAME'),
+        "PASSWORD": config('MY_DATABASE_PASSWORD'),
         "HOST": "localhost",
         "PORT": "5432",
     }
