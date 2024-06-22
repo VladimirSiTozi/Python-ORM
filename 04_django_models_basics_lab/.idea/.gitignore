@@ -8,3 +8,4 @@
 /dataSources.local.xml
 # Ignore environment variable file
 .env
+.idea
