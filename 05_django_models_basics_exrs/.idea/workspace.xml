@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c9f9e836-58e5-4d58-b9ab-b81bb612890b" name="Changes" comment="" />
+    <list default="true" id="c9f9e836-58e5-4d58-b9ab-b81bb612890b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -29,7 +31,7 @@
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/vlady/PycharmProjects/python_orm_softuni/Python-ORM/05_django_models_basics_exrs",
+    "last_opened_file_path": "C:/Users/vlady/PycharmProjects/python_orm_softuni/06_django_migrations_lab",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -89,6 +91,7 @@
       <workItem from="1718897069843" duration="9076000" />
       <workItem from="1718992331605" duration="45000" />
       <workItem from="1719091045155" duration="655000" />
+      <workItem from="1719092710927" duration="969000" />
     </task>
     <servers />
   </component>
