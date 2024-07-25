@@ -9,3 +9,4 @@
 # ingnore env file
 *.env
 *.idea
+*alembic.ini
