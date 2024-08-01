@@ -5,7 +5,7 @@ from typing import List
 import django
 import random
 
-from django.db.models import Sum
+from django.db.models import Sum, Q, Min, Max, Avg
 from django.template.defaultfilters import upper
 
 # Set up Django
@@ -325,7 +325,7 @@ def add_new_user_to_author_followers(author_input_id, user_input_id):
 
     return f'*** Notification ***\n - {user} has followed book author {author}'
 
-print(add_new_user_to_author_followers(1, 505))
+# print(add_new_user_to_author_followers(1, 505))
 
 
 # 20.
@@ -338,6 +338,206 @@ def remove_first_follower_from_author_followers(author_input_id):
     return f'*** Notification ***\n- {user} unfollowed - {author}'
 
 # print(remove_first_follower_from_author_followers(1))
+
+
+# 21.
+def select_authors_through_users():
+    authors = User.objects.get(id=1).followed_authors.all().values('first_name')
+
+    print(f'*** Authors - Through Users ***')
+
+    return authors
+
+# print(select_authors_through_users())
+
+
+# 22.
+def authors_and_their_books_containing(input_text: str):
+    authors = Author.objects.prefetch_related('books').filter(books__title__icontains=input_text)
+
+    print(f'*** Authors - Who wrote book with "{input_text}" as part of Book Title ***')
+
+    return authors
+
+# print(authors_and_their_books_containing('Bed of'))
+
+
+# 23.
+def author_complex_query(input_letter: str):
+    query = (Q(first_name__istartswith=input_letter) & Q(last_name__istartswith=input_letter) &
+             Q(Q(popularity_score__gt=30) | Q(join_date__gt='2014-01-01')))
+    author = Author.objects.filter(query)
+
+    print(f'*** Authors - whose names start with ‘{input_letter}’ case insensitive, and either their popularity score '
+          f'is greater than 30 or they have joined after 2014 ***')
+
+    return author
+
+# print(author_complex_query('b'))
+# print(author_complex_query('m'))
+# print(author_complex_query('t'))
+
+
+# 24.
+def retrieve_specific_object():
+    author = Author.objects.get(id=1)
+
+    print(f'*** Authors - Retrieve a specific object with primary key= 1 ***')
+
+    return author
+
+# print(retrieve_specific_object())
+
+
+# 25.
+def retrieve_first_10_authors():
+    authors = Author.objects.all()[:10]
+
+    result = []
+
+    for author in authors:
+        result.append(f' - {author}')
+
+    text = '\n'.join(result)
+
+    return f'*** Authors - First 10 authors ***\n{text}'
+
+# print(retrieve_first_10_authors())
+
+
+# 26.
+def retrieve_first_and_last_author_with_popularity(input_popularity: int):
+    author = Author.objects.filter(popularity_score=input_popularity)
+
+    author1 = author.first()
+    author2 = author.last()
+
+    result = [f' - First is {author1}',
+              f' - Last is {author2}']
+
+    text = '\n'.join(result)
+
+    return f'*** Authors - First and Last authors with popularity equal to {input_popularity} ***\n{text}'
+
+# print(retrieve_first_and_last_author_with_popularity(99))
+
+
+# 27.
+def author_complex_query2(join_year: int, popularity: int, join_day: int, letter: str):
+    author = Author.objects.filter(join_date__year__gte=join_year,
+                                   popularity_score__gte=popularity,
+                                   join_date__day__gte=join_day,
+                                   first_name__istartswith=letter)
+
+    return (f'*** Authors - Who joined after or in the year {join_year}, popularity score greater than or equal to '
+            f'{popularity}, after or with date {join_day}, and first name starts with "{letter}" (case insensitive) ***'
+            f'\n {author}')
+
+# print(author_complex_query2(2012, 40, 12, 'a'))
+
+
+# 28.
+def authors_did_not_join_in_year(year: int):
+    query = ~Q(join_date__year=str(year))
+    author = Author.objects.filter(query)
+
+    print(f"*** Authors - Who didn't join in {year} ***")
+
+    return author
+
+# print(authors_did_not_join_in_year(2012))
+
+
+# 29.
+def avg_popularity_score_and_sum_of_price():
+    oldest_author = Author.objects.aggregate(Min('join_date'))
+    # oldest_author = Author.objects.order_by('join_date').first()
+
+    newest_author = Author.objects.aggregate(Max('join_date'))
+    # newest_author = Author.objects.order_by('join_date').last()
+
+    avg_popularity = Author.objects.aggregate(Avg('popularity_score'))
+
+    total_price = Book.objects.aggregate(Sum('price'))
+
+    return [oldest_author, newest_author, avg_popularity, total_price]
+
+# print(avg_popularity_score_and_sum_of_price())
+
+
+# 30.
+def authors_without_recommender():
+    author = Author.objects.filter(recommended_authors__isnull=True)
+
+    print(f"*** Authors - Without recommender ***")
+
+    return author
+
+# print(authors_without_recommender())
+
+
+# 31.
+def books_complex_query():
+    books1 = Book.objects.filter(author__isnull=True)
+    books2 = Book.objects.filter(author__isnull=True, author__recommendedby__isnull=True)
+
+    print(f"*** Books - Without author and author has no recommender ***")
+
+    return [books1, books2]
+
+# print(books_complex_query())
+
+
+# 32.
+def multiple_queries(input_id):
+    total_price = Book.objects.filter(author_id=input_id).aggregate(Sum('price'))
+
+    oldest_book = Book.objects.filter(author_id=input_id).order_by('published_date').first()
+
+    newest_book = Book.objects.filter(author_id=input_id).order_by('published_date').last()
+
+    print(f"*** Books - Total price of books, oldest and newest book by author with id # {input_id} ***")
+
+    return [total_price, oldest_book, newest_book]
+
+# print(multiple_queries(1))
+
+
+# 33.
+def oldest_published_book_for_every_publisher():
+    publishers = Publisher.objects.prefetch_related('books')
+
+    result = []
+
+    for publisher in publishers:
+        result.append(f' - {publisher} {publisher.books.order_by("published_date").first()}')
+
+    text = '\n'.join(result)
+
+    return f'*** Publisher - and their oldest published books ***\n{text}'
+
+# print(oldest_published_book_for_every_publisher())
+
+
+# 34.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
