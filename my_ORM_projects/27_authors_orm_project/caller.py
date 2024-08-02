@@ -1,3 +1,4 @@
+import datetime
 import os
 from random import randint
 from typing import List
@@ -5,7 +6,7 @@ from typing import List
 import django
 import random
 
-from django.db.models import Sum, Q, Min, Max, Avg
+from django.db.models import Sum, Q, Min, Max, Avg, Count
 from django.template.defaultfilters import upper
 
 # Set up Django
@@ -520,28 +521,83 @@ def oldest_published_book_for_every_publisher():
 
 
 # 34.
+def avg_price_of_all_books():
+    price = Book.objects.aggregate(avg_price=Avg('price'))
+
+    return f'*** Books - Average price of all books ***\n - {price["avg_price"]:.2f}$ '
+
+# print(avg_price_of_all_books())
 
 
+# 35.
+def max_popularity_of_publishers(input_author_id: int):
+    max_popularity = (Publisher.objects.prefetch_related('books')
+                      .filter(books__author_id=input_author_id)
+                      .aggregate(max_ps=Max('popularity_score'))
+                      )
+
+    return (f'*** Publisher - with max popularity who published a book with author id #{input_author_id} '
+            f'is with {max_popularity["max_ps"]} popularity score ***')
+
+# print(max_popularity_of_publishers(2))
+# print(max_popularity_of_publishers(3))
+# print(max_popularity_of_publishers(199))
 
 
+# 36.
+def authors_count_written_a_book_containing(input_text: str):
+    authors_count = (Author.objects.filter(books__title__icontains=input_text)
+                     .aggregate(au_count=Count('id'))
+                     )
+
+    return (f'*** Authors - who have written a book which contains the phrase ‘{input_text}’ case insensitive ***'
+            f'\n - Their count is {authors_count["au_count"]}.')
+
+# print(authors_count_written_a_book_containing('ab'))
 
 
+# 37.
+def authors_with_followers_more_than(followers_number: int):
+    authors = Author.objects.annotate(f_count=Count('followers')).filter(f_count__gt= followers_number)
+
+    print(f'*** Authors - who have followers more than {followers_number} ***')
+
+    return authors
+
+# print(authors_with_followers_more_than(10))
 
 
+# 38.
+def avg_popularity_of_authors_after_2014():
+    authors = Author.objects.filter(join_date__gt='2014-09-20').aggregate(avg_ps=Avg('popularity_score'))
+    # authors = (Author.objects.filter(join_date__gt=datetime.date(year=2014, month=9, day=20))
+    #            .aggregate(avg_ps=Avg('popularity_score')))
+
+    print(f'*** Authors - average popularity who joined after 20 September 2014 ***')
+
+    return f' - avg_popularity = {authors["avg_ps"]:.2f}'
+
+# print(avg_popularity_of_authors_after_2014())
 
 
+# 39.
+def books_by_author_with_more_than_10_books():
+    books = (Book.objects.annotate(b_count=Count('author__books'))
+             .filter(b_count__gt=10)
+             .distinct()
+             )
+
+    print(f'*** Books - list of books whose author has written more than 10 books ***')
+
+    return books
+
+# print(books_by_author_with_more_than_10_books())
 
 
+# 40.
+def duplicate_titles():
+    books = Book.objects.annotate(count_title=Count('title')).filter(count_title__gt=1)
 
+    return books
 
-
-
-
-
-
-
-
-
-
-
-
+# print(duplicate_titles())
