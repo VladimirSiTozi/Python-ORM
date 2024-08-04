@@ -1,4 +1,4 @@
-Exercises:
+Django Queries Exercises:
 
 1.	Write a Query using Django ORM to fetch all the books objects from your database.
 2.	Write a Query using Django ORM to fetch title and published_date of all books from the database.
@@ -20,8 +20,6 @@ Exercises:
 18.	Set the followers list of the author, with only one user with (author_input_id, user_input_id).
 19.	Add new users in followers of the author with (author_input_id, user_input_id).
 20.	Remove first user from the followers of the author with (author_input_id, user_input_id).
-/done
-
 21.	Get first names of all the authors, whose user with pk = 1 is following. (Without Accessing Author.objects manager)
 22.	Fetch list of all authors who wrote a book with “tle” as part of Book Title.
 23.	Fetch the list of authors whose names start with ‘A’ case insensitive, and either their popularity score is greater than 5 or they have joined after 2014. with Q objects.
@@ -42,4 +40,3 @@ Exercises:
 38.	Get average popularity score of all the authors who joined after 20 September 2014.
 39.	Generate a list of books whose author has written more than 10 books.
 40.	Get the list of books with duplicate titles.
-
